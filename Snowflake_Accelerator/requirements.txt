@@ -1,8 +1,0 @@
-streamlit
-pandas
-flask
-requests
-snowflake-connector-python
-plotly
-flask-cors
-gunicorn
