@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Order</title>
+
+    <style>
+        body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+
+   background:
+    linear-gradient(rgba(244, 247, 251, 0.45), rgba(244, 247, 251, 0.55)),
+    url("{{ url_for('static', filename='create.jpg') }}") center / cover fixed;
+
+color: var(--ink);
+
+            background-size: cover;
+}
+
+        .container {
+    width: 420px;
+    margin: 80px auto;
+    padding: 30px;
+
+    background: rgba(255, 255, 255, 0.95);  /* clean white */
+    border-radius: 16px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+       input, select {
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+
+    box-sizing: border-box;   /* ✅ FIX */
+}
+       button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+
+    background: linear-gradient(135deg,#575151,#ce3e3e);
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+        #msg {
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Create Order</h2>
+
+    <form id="form">
+        <input type="text" id="org_id" placeholder="Organization ID" required>
+        <input type="text" id="source" placeholder="Source" required>
+        <input type="text" id="destination" placeholder="Destination" required>
+        <input type="number" id="load" placeholder="Load" required>
+        <input type="date" id="date" required>
+
+        <select id="priority">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+        </select>
+
+        <button type="submit">Create Order</button>
+    </form>
+
+    <p id="msg"></p>
+</div>
+
+<script>
+document.getElementById("form").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const msg = document.getElementById("msg");
+    msg.innerText = "Creating Order...";
+
+    const data = {
+        org_id: document.getElementById("org_id").value,
+        source: document.getElementById("source").value,
+        destination: document.getElementById("destination").value,
+        load: document.getElementById("load").value,
+        date: document.getElementById("date").value,
+        priority: document.getElementById("priority").value
+    };
+
+    const res = await fetch("/create_order", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if(result.success){
+        msg.innerHTML = `
+            ✅ Order Created <br>
+            <b>Order ID: ${result.order_id}</b>
+        `;
+
+        // Next step (processing page later)
+        setTimeout(() => {
+            window.location.href = "/process/" + result.order_id;
+        }, 2000);
+
+    } else {
+        msg.innerText = "❌ Error: " + result.error;
+    }
+});
+</script>
+
+</body>
+</html>
