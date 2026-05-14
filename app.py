@@ -98,7 +98,7 @@ def tracking_without_id():
  
 @app.route('/dashboard')
 def dashboard_page():
-     return redirect("http://localhost:8501")
+     return redirect("https://dashboardlogisticsystem.streamlit.app/")
  
  
 # -------------------------------
