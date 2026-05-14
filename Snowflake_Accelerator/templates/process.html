@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Process Order</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial;
+
+             background:
+        linear-gradient(rgba(244, 247, 251, 0.86), rgba(244, 247, 251, 0.92)),
+        url("{{ url_for('static', filename='process.jpg') }}") center / cover fixed;
+    color: var(--ink);
+
+            background-size: cover;
+        }
+
+        .container {
+            width: 650px;
+            margin: 60px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: black;
+        }
+
+        .step {
+            padding: 12px;
+            margin: 10px 0;
+            background: #eef4ff;
+            border-left: 5px solid #ce3e3e;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e6ffe6;
+            border-left: 5px solid green;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg,#575151,#ce3e3e);
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        button:hover {
+             transform: scale(1.05);
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .home-btn {
+           background: linear-gradient(135deg,#575151,#ce3e3e);
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Order Processing</h2>
+
+    <p><b>Order ID:</b> {{ order_id }}</p>
+
+    <button id="startBtn" onclick="startProcessing()">Start Processing</button>
+
+    <div id="steps"></div>
+    <div id="result"></div>
+
+    <!-- ✅ Clean Button Row -->
+    <div class="btn-row">
+        <button id="nextBtn" style="display:none;" onclick="goNext()">➡ Inventory</button>
+        <button id="dispatchBtn" style="display:none;" onclick="dispatchOrder()">🚚 Dispatch</button>
+        <button class="home-btn" onclick="goHome()">⬅ Home</button>
+    </div>
+</div>
+
+<script>
+
+function addStep(text) {
+    document.getElementById("steps").innerHTML +=
+        `<div class="step">${text}</div>`;
+}
+
+function goHome(){
+    window.location.href = "/";
+}
+
+function startProcessing() {
+
+    // Reset UI
+    document.getElementById("steps").innerHTML = "";
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("nextBtn").style.display = "none";
+    document.getElementById("dispatchBtn").style.display = "none";
+
+    // Disable button after click
+    document.getElementById("startBtn").disabled = true;
+
+    addStep("🔍 Finding best route...");
+
+    setTimeout(() => {
+        addStep("📍 Detecting nearest hub...");
+
+        setTimeout(() => {
+
+            fetch(`/process_order/{{ order_id }}`)
+            .then(res => res.json())
+            .then(data => {
+
+                if(data.error){
+                    document.getElementById("result").innerHTML =
+                        `<p class="error">❌ ${data.error}</p>`;
+                    return;
+                }
+
+                addStep("✅ Route Found");
+                addStep("✅ Hub Selected");
+
+                addStep(`🛣 Route: ${data.route}`);
+                addStep(`📦 Hub: ${data.hub_name}`);
+                addStep(`📊 Inventory: ${data.inventory}`);
+                addStep(`📈 Incoming: ${data.incoming}`);
+                addStep(`⚖ Total Available in Source_Hub: ${data.total_available}`);
+                addStep(`✔ Decision: ${data.decision}`);
+                addStep(`🚚 Vehicles: ${data.vehicles_required}`);
+                if(data.vehicle_id){
+                    addStep(`✅ Vehicle ${data.vehicle_id} available at source hub`);
+                }
+
+                // Result Box
+                document.getElementById("result").innerHTML = `
+                    <div class="result">
+                        <h3>Processing Result</h3>
+                        <p><b>Route ID:</b> ${data.route_id}</p>
+                        <p><b>Distance:</b> ${data.distance} km</p>
+                        <p><b>Time:</b> ${data.time} hrs</p>
+                        <p><b>Hub:</b> ${data.hub_name}</p>
+                        <p><b>Vehicles:</b> ${data.vehicles_required}</p>
+                        ${data.vehicle_id ? `<p><b>Selected Vehicle:</b> ${data.vehicle_id}</p>` : ""}
+                    </div>
+                `;
+
+                // Show buttons
+                document.getElementById("nextBtn").style.display = "block";
+                document.getElementById("dispatchBtn").style.display = "block";
+
+            })
+            .catch(() => {
+                document.getElementById("result").innerHTML =
+                    `<p class="error">❌ Server Error</p>`;
+            });
+
+        }, 1000);
+
+    }, 1000);
+}
+
+function dispatchOrder(){
+    fetch(`/dispatch/{{ order_id }}`)
+    .then(res => res.json())
+    .then(data => {
+        if(data.error){
+            alert(data.error);
+            return;
+        }
+        alert(data.message || "Order Dispatched!");
+        window.location.href = `/tracking/{{ order_id }}`;
+    });
+}
+
+function goNext(){
+    window.location.href = `/inventory/{{ order_id }}`;
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Logistics Accelerator</title>
+ 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+<style>
+ 
+/* GLOBAL */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+ 
+    background: linear-gradient(-45deg,
+        #ffe5e5,
+        #ffd6d6,
+        #fff0f0,
+        #ffcccc
+    );
+ 
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+ 
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+ 
+/* ANIMATED GRID */
+body::before{
+    content:'';
+    position: fixed;
+    width: 200%;
+    height: 200%;
+    top:-50%;
+    left:-50%;
+ 
+    background-image:
+        linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px);
+ 
+    background-size: 50px 50px;
+ 
+    animation: moveGrid 25s linear infinite;
+    z-index: -3;
+}
+ 
+/* GLOW EFFECT */
+body::after{
+    content:'';
+    position: fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+ 
+    background:
+        radial-gradient(circle at 20% 20%, rgba(255,99,71,0.35), transparent 25%),
+        radial-gradient(circle at 80% 30%, rgba(255,69,58,0.25), transparent 25%),
+        radial-gradient(circle at 60% 80%, rgba(255,0,0,0.18), transparent 25%);
+ 
+    z-index:-2;
+}
+ 
+/* FLOATING PARTICLES */
+.particles span{
+    position:absolute;
+    display:block;
+ 
+    width:20px;
+    height:20px;
+ 
+    background:rgba(255,255,255,0.35);
+ 
+    border-radius:50%;
+ 
+    bottom:-150px;
+ 
+    animation: float 20s linear infinite;
+    backdrop-filter: blur(4px);
+}
+ 
+.particles span:nth-child(1){
+    left:10%;
+    width:40px;
+    height:40px;
+    animation-duration:18s;
+}
+ 
+.particles span:nth-child(2){
+    left:20%;
+    animation-duration:25s;
+}
+ 
+.particles span:nth-child(3){
+    left:35%;
+    width:30px;
+    height:30px;
+    animation-duration:15s;
+}
+ 
+.particles span:nth-child(4){
+    left:50%;
+    animation-duration:22s;
+}
+ 
+.particles span:nth-child(5){
+    left:65%;
+    width:45px;
+    height:45px;
+    animation-duration:17s;
+}
+ 
+.particles span:nth-child(6){
+    left:80%;
+    animation-duration:26s;
+}
+ 
+.particles span:nth-child(7){
+    left:90%;
+    width:25px;
+    height:25px;
+    animation-duration:19s;
+}
+ 
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+ 
+    padding: 20px 50px;
+ 
+    background: rgb(0, 0, 0);
+    backdrop-filter: blur(14px);
+ 
+    color: #e6dcdc;
+ 
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+ 
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+ 
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+ 
+.nav-links {
+    display: flex;
+    gap: 25px;
+}
+ 
+.nav-links a {
+    text-decoration: none;
+    color: #d2caca;
+    font-size: 15px;
+    transition: 0.3s;
+}
+ 
+.nav-links a:hover {
+    color: #dc2626;
+    transform: translateY(-2px);
+}
+ 
+/* HERO */
+.hero {
+    height: 55vh;
+ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+ 
+    text-align: center;
+    position: relative;
+}
+ 
+.hero h1 {
+    font-size: 52px;
+    margin-bottom: 10px;
+ 
+    color: #7f1d1d;
+ 
+    animation: fadeUp 1s ease;
+}
+ 
+.hero p {
+    font-size: 18px;
+    color: #991b1b;
+ 
+    animation: fadeUp 1.5s ease;
+}
+ 
+/* CARDS */
+.carousel-container {
+    margin-top: -70px;
+    padding-bottom: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+ 
+.carousel-item .d-flex {
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+ 
+.info-card {
+    width: 390px;
+    height: 290px;
+ 
+    background: rgba(255,255,255,0.28);
+    backdrop-filter: blur(14px);
+ 
+    border-radius: 20px;
+    padding: 20px;
+ 
+    text-align: center;
+ 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+ 
+    border: 1px solid rgba(255,255,255,0.4);
+ 
+    box-shadow: 0 12px 30px rgba(255,0,0,0.12);
+ 
+    transition: 0.4s;
+ 
+    color: #7f1d1d;
+}
+ 
+.info-card:hover {
+    transform: translateY(-12px) scale(1.03);
+}
+ 
+.info-card h4 {
+    margin-bottom: 8px;
+    font-size: 22px;
+}
+ 
+.info-card p {
+    font-size: 14px;
+    color: #7f1d1d;
+}
+ 
+.info-card a {
+    margin-top: 15px;
+ 
+    display: inline-block;
+ 
+    padding: 10px 18px;
+ 
+    background: linear-gradient(135deg,#575151,#ce3e3e);
+ 
+    color: white;
+ 
+    border-radius: 10px;
+ 
+    text-decoration: none;
+ 
+    font-size: 14px;
+ 
+    transition: 0.3s;
+}
+ 
+.info-card a:hover {
+    transform: scale(1.05);
+}
+ 
+/* HUB SECTION */
+.hub-section{
+    padding: 30px 40px;
+    margin-top: 30px;
+}
+ 
+.hub-section h2 {
+    margin-bottom: 20px;
+    color: #7f1d1d;
+    font-weight: bold;
+}
+ 
+/* TABLE */
+.snow-table{
+    background: rgba(255,255,255,0.22);
+    backdrop-filter: blur(16px);
+ 
+    border-radius: 18px;
+    overflow: hidden;
+ 
+    color: #7f1d1d;
+    max-width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+ 
+    box-shadow: 0 8px 30px rgba(255,0,0,0.10);
+}
+ 
+.snow-table thead{
+    background: rgba(255,255,255,0.35);
+}
+ 
+.snow-table th,
+.snow-table td{
+    padding: 14px;
+    border-color: rgba(255,255,255,0.25);
+}
+ 
+.snow-table tbody tr{
+    transition: 0.3s;
+}
+ 
+.snow-table tbody tr:hover{
+    background: rgba(255,255,255,0.25);
+    transform: scale(1.005);
+}
+ 
+/* DROPDOWN */
+.form-select{
+    max-width: 1470px;
+    margin-left: auto;
+    margin-right: auto;
+ 
+ 
+    background: rgba(255,255,255,0.30);
+ 
+    color: #7f1d1d;
+ 
+    border: 1px solid rgba(255,255,255,0.35);
+ 
+    backdrop-filter: blur(10px);
+}
+ 
+.form-select option{
+    color:black;
+}
+ 
+/* ANIMATIONS */
+@keyframes gradientBG {
+ 
+    0%{
+        background-position:0% 50%;
+    }
+ 
+    50%{
+        background-position:100% 50%;
+    }
+ 
+    100%{
+        background-position:0% 50%;
+    }
+}
+ 
+@keyframes moveGrid {
+ 
+    0%{
+        transform: translate(0,0);
+    }
+ 
+    100%{
+        transform: translate(50px,50px);
+    }
+}
+ 
+@keyframes float {
+ 
+    0%{
+        transform: translateY(0) rotate(0deg);
+        opacity:0;
+    }
+ 
+    10%{
+        opacity:1;
+    }
+ 
+    100%{
+        transform: translateY(-1000px) rotate(720deg);
+        opacity:0;
+    }
+}
+ 
+@keyframes fadeUp {
+ 
+    from{
+        opacity:0;
+        transform: translateY(40px);
+    }
+ 
+    to{
+        opacity:1;
+        transform: translateY(0);
+    }
+}
+/* ================= RESPONSIVE ================= */
+
+/* Laptop */
+@media screen and (max-width: 1200px){
+
+    .info-card{
+        width: 340px;
+        height: auto;
+    }
+
+    .snow-table{
+        max-width: 95%;
+    }
+}
+
+
+/* Tablet */
+@media screen and (max-width: 992px){
+
+    .navbar{
+        padding: 18px 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .nav-links{
+        gap: 18px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero{
+        height: auto;
+        padding: 80px 20px;
+    }
+
+    .hero h1{
+        font-size: 42px;
+    }
+
+    .hero p{
+        font-size: 16px;
+    }
+
+    .carousel-container{
+        margin-top: -40px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .info-card{
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .hub-section{
+        padding: 20px;
+    }
+
+    .snow-table{
+        overflow-x: auto;
+        display: block;
+    }
+}
+
+
+/* Mobile */
+@media screen and (max-width: 768px){
+
+    .navbar{
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .logo{
+        font-size: 20px;
+    }
+
+    .nav-links{
+        width: 100%;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .nav-links a{
+        font-size: 14px;
+    }
+
+    .hero{
+        padding: 60px 15px;
+    }
+
+    .hero h1{
+        font-size: 32px;
+        line-height: 1.3;
+    }
+
+    .hero p{
+        font-size: 15px;
+    }
+
+    .carousel-item .d-flex{
+        gap: 18px;
+    }
+
+    .info-card{
+        width: 100%;
+        height: auto;
+        padding: 18px;
+    }
+
+    .info-card h4{
+        font-size: 20px;
+    }
+
+    .info-card p{
+        font-size: 13px;
+    }
+
+    .hub-section{
+        padding: 15px;
+    }
+
+    .hub-section h2{
+        font-size: 24px;
+        text-align: center;
+    }
+
+    .snow-table{
+        width: 100%;
+        max-width: 100%;
+        font-size: 14px;
+        overflow-x: auto;
+        display: block;
+    }
+
+    .snow-table th,
+    .snow-table td{
+        white-space: nowrap;
+        padding: 12px;
+    }
+
+    .form-select{
+        width: 100%;
+    }
+}
+
+
+/* Small Mobile */
+@media screen and (max-width: 480px){
+
+    .hero h1{
+        font-size: 26px;
+    }
+
+    .hero p{
+        font-size: 14px;
+    }
+
+    .info-card{
+        border-radius: 16px;
+    }
+
+    .info-card h4{
+        font-size: 18px;
+    }
+
+    .info-card a{
+        width: 100%;
+    }
+
+    .snow-table{
+        font-size: 13px;
+    }
+
+    .snow-table th,
+    .snow-table td{
+        padding: 10px;
+    }
+}
+ 
+</style>
+</head>
+ 
+<body>
+ 
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">🚚 Logistics Accelerator</div>
+ 
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/create">Create</a>
+        <a href="/orders">Orders</a>
+        <a href="/tracking">Tracking</a>
+        <a href="/dashboard">Dashboard</a>
+    </div>
+</div>
+<div class="particles">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+ 
+<!-- HERO -->
+<div class="hero">
+    <h1>AI-Powered Logistics Automation</h1>
+    <p>Manage operations, inventory, and tracking in one unified system</p>
+</div>
+ 
+<!-- CARDS -->
+<div class="carousel-container">
+<div id="cardCarousel" class="carousel slide">
+<div class="carousel-inner">
+ 
+<div class="carousel-item active">
+<div class="d-flex">
+ 
+<div class="info-card">
+    <h4>📝 Create Order</h4>
+    <p>Create and initiate new shipments</p>
+    <a href="/create">Open</a>
+</div>
+ 
+<div class="info-card">
+    <h4>📦 Orders</h4>
+    <p>View and manage all orders</p>
+    <a href="/orders">Open</a>
+</div>
+ 
+<div class="info-card">
+    <h4>📍 Tracking</h4>
+    <p>Track shipments in real-time</p>
+    <a href="/tracking">Open</a>
+</div>
+ 
+<div class="info-card">
+    <h4>📊 Dashboard</h4>
+    <p>Analytics and system overview</p>
+    <a href="/dashboard">Open</a>
+</div>
+ 
+</div>
+</div>
+ 
+</div>
+ 
+<!-- HUB SECTION -->
+<div class="hub-section">
+ 
+    <h2>All Hubs</h2>
+ 
+    <!-- FILTER -->
+    <div class="mb-3">
+        <select id="regionFilter" class="form-select">
+            <option value="all">All Regions</option>
+            <option value="north">North India</option>
+            <option value="west">West India</option>
+            <option value="south">South India</option>
+            <option value="east">East India</option>
+            <option value="central">Central India</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+ 
+    <!-- HUB + INVENTORY TABLE -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle snow-table">
+            <thead>
+                <tr>
+                    <th>Hub Name</th>
+                    <th>City</th>
+                    <th>Region</th>
+                    <th>Total Inventory</th>
+                </tr>
+            </thead>
+ 
+            <tbody id="hubTableBody">
+ 
+                {% for hub in hubs %}
+ 
+                {% set region = 'other' %}
+ 
+                <!-- NORTH -->
+                {% if hub.name.startswith('Delhi') or hub.city in [
+                    'Chandigarh','Jaipur','Lucknow',
+                    'Dehradun','Srinagar','Kanpur',
+                    'Varanasi','Agra','Meerut'
+                ] %}
+                    {% set region = 'north' %}
+ 
+                <!-- WEST -->
+                {% elif hub.city in [
+                    'Mumbai','Pune','Ahmedabad',
+                    'Surat','Gandhinagar','Vadodara',
+                    'Rajkot','Nashik',
+                    'Bhopal','Indore',
+                    'Nagpur','Panaji'
+                ] %}
+                    {% set region = 'west' %}
+ 
+                <!-- SOUTH -->
+                {% elif hub.city in [
+                    'Bengaluru','Chennai','Hyderabad',
+                    'Kochi','Mysuru','Madurai',
+                    'Coimbatore','Vijayawada',
+                    'Warangal','Tuticorin',
+                    'Thiruvananthapuram',
+                    'Mangalore',
+                    'Visakhapatnam'
+                ] %}
+                    {% set region = 'south' %}
+ 
+                <!-- EAST -->
+                {% elif hub.city in [
+                    'Kolkata','Bhubaneswar','Patna',
+                    'Ranchi','Guwahati','Durgapur',
+                    'Asansol','Jamshedpur',
+                    'Raipur','Imphal',
+                    'Agartala','Aizawl',
+                    'Shillong','Port Blair'
+                ] %}
+                    {% set region = 'east' %}
+ 
+                <!-- CENTRAL -->
+                {% elif hub.city in [
+                    'Gwalior','Jabalpur'
+                ] %}
+                    {% set region = 'central' %}
+ 
+                {% endif %}
+ 
+                <tr class="hub-row" data-region="{{ region }}">
+                    <td>{{ hub.name }}</td>
+                    <td>{{ hub.city }}</td>
+                    <td>{{ region.title() }}</td>
+ 
+                    <!-- INVENTORY COLUMN -->
+                    <td>
+                        {% if inventory_map[hub.id] %}
+                            {{ inventory_map[hub.id] }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                </tr>
+ 
+                {% endfor %}
+ 
+            </tbody>
+        </table>
+    </div>
+ 
+</div>
+ 
+ 
+<!-- FILTER SCRIPT -->
+<script>
+const filter = document.getElementById("regionFilter");
+ 
+filter.addEventListener("change", function () {
+ 
+    const selected = this.value;
+    const rows = document.querySelectorAll(".hub-row");
+ 
+    rows.forEach(row => {
+ 
+        if (selected === "all" || row.dataset.region === selected) {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+ 
+    });
+ 
+});
+</script>
+ 
+</body>
+</html>
